@@ -165,7 +165,10 @@ func listInvalidRepos(ctx context.Context, client *github.Client) ([]*github.Rep
 // deleteRepos takes in a list of Git repository objects and deletes each one using go-github
 func deleteRepos(ctx context.Context, client *github.Client, repos []*github.Repository) error {
 	for _, repo := range repos {
-		deleteRepo(ctx, client, *repo.Name)
+		err := deleteRepo(ctx, client, *repo.Name)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
