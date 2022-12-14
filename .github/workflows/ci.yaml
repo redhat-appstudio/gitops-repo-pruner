@@ -55,26 +55,6 @@ jobs:
         with:
           version: "2022.1"
           install-go: false
-      - name: Check manifests
-        run: |
-          # Note: fmt is necessary after generate since generated sources will
-          #       fail format check by default.
-          make generate fmt manifests
-          if [[ ! -z $(git status -s) ]]
-          then
-            echo "generated sources are not up to date:"
-            git --no-pager diff
-            exit 1
-          fi
-      - name: Run Go Tests
-        run: |
-          make test
-      - name: Check if Manager Kustomize has the right image
-        run: |
-          ./check-manager-kustomize.sh
-          exit $?
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.1.0
       - name: Run Gosec Security Scanner
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@latest
@@ -91,8 +71,6 @@ jobs:
           # Path to SARIF file relative to the root of the repository
           sarif_file: gosec.sarif
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.1.0
   docker:
     name: Check docker build
     runs-on: ubuntu-latest
