@@ -1,0 +1,35 @@
+name: Container build and push
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-image:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout gitops-repo-pruner source code
+        uses: actions/checkout@v2
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            quay.io/redhat-appstudio/application-service
+          tags: |
+            next
+            type=sha
+      - name: Login to Quay
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+          registry: quay.io
+          repository: redhat-appstudio/gitops-repo-pruner
+      - name: Docker Build & Push - gitops-repo-pruner Image
+        uses: docker/build-push-action@v3
+        with:
+          dockerfile: Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
