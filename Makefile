@@ -90,23 +90,20 @@ gosec:
 lint:
 	golangci-lint --version
 	GOMAXPROCS=2 golangci-lint run --fix --verbose --timeout 300s
-
-test: manifests generate fmt vet envtest ## Run tests.
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" go test ./... -coverprofile cover.out -v
-
+	
 ##@ Build
 
 build: generate fmt vet ## Build binary.
 	go build -o gitops-repo-pruner main.go
 
-docker-build: test ## Build docker image with the pruner.
-	docker build --build-arg -t ${IMG} .
+docker-build: ## Build docker image with the pruner.
+	docker build -t ${IMG} .
 
 docker-push: ## Push docker image with the pruner.
 	docker push ${IMG}
 
 deploy: kustomize ## Deploy pruner to the K8s cluster specified in ~/.kube/config.
-	cd config/cronjob && $(KUSTOMIZE) edit set image controller=${IMG}
+	cd config/cronjob && $(KUSTOMIZE) edit set image gitops-repo-pruner=${IMG}
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 CONTROLLER_GEN = $(shell pwd)/bin/controller-gen

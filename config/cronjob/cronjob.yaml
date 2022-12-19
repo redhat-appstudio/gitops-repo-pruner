@@ -15,4 +15,11 @@ spec:
             imagePullPolicy: Always
             command:
             - ./entrypoint.sh
+            env:
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gitops-pruner-token
+                  key: token
+                  optional: true
           restartPolicy: Never

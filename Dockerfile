@@ -23,9 +23,19 @@ ARG ENABLE_WEBHOOKS=true
 ENV ENABLE_WEBHOOKS=${ENABLE_WEBHOOKS}
 
 # Set the Git config for the AppData bot
-WORKDIR /
+WORKDIR /pruner
+
+# Install Kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+  && chmod +x ./kubectl \
+  && mv ./kubectl /usr/local/bin/kubectl
+
 COPY --from=builder /workspace/gitops-repo-gc .
 COPY entrypoint.sh .
+
+RUN chgrp -R 0 /pruner/ && \
+    chmod -R g=u /pruner
+
 USER 1001
 
 ENTRYPOINT ["/entrypoint.sh"]
