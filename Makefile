@@ -93,8 +93,8 @@ lint:
 	
 ##@ Build
 
-build: generate fmt vet ## Build binary.
-	go build -o gitops-repo-pruner main.go
+build: fmt vet ## Build binary.
+	go build -o gitops-repo-gc main.go
 
 docker-build: ## Build docker image with the pruner.
 	docker build -t ${IMG} .
