@@ -1,5 +1,7 @@
 # gitops-repo-pruner
 
+# NOTE This repository has been archived 
+
 ## Usage:
 
 The tool requires that the `GITHUB_TOKEN` environment variable be exported before using it. The token that you use, must have sufficient permissions to delete repositories from the specified org. 
